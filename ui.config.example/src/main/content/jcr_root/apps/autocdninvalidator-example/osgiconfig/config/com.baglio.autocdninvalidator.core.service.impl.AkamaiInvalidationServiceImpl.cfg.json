@@ -1,0 +1,9 @@
+{
+  "isEnabled": true,
+  "configurationID": "cdn-akamai",
+  "getAkamaiClientToken": "placeholder_akamai_client_token",
+  "hostname": "localhost:8443",
+  "getAkamaiAccessToken": "placeholder_akamai_access_token",
+  "getAkamaiClientSecret": "placeholder_akamai_client_secret",
+  "httpClientConfigurationID": "http-client-akamai"
+}

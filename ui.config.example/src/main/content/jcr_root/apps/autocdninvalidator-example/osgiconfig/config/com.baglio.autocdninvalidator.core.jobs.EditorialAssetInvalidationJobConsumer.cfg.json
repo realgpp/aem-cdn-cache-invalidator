@@ -1,0 +1,14 @@
+{
+  "isEnabled": true,
+  "job.topics": [
+    "com/baglio/autocdninvalidator/akamai/generic"
+  ],
+  "cdnConfigurationID": "cdn-akamai",
+  "invalidation.type": "tag",
+  "tagCodeMappings": [
+    "/content/we-retail/(..)(/.*)*=tag-dev-$1",
+    "/content/we-retail/(..)/.*/experience/.*=tag-dev-$1-experience",
+    "/content/wknd/(..)(/.*)*=tag-dev-$1",
+    "/content/wknd/(..)/.*/adventures/.*=tag-dev-$1-adventures"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "isEnabled": true,
+  "job.topics": [
+    "com/baglio/autocdninvalidator/akamai/products"
+  ],
+  "cdnConfigurationID": "cdn-akamai",
+  "invalidation.type": "urls"
+}
