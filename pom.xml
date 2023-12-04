@@ -18,7 +18,7 @@
     <groupId>com.baglio.autocdninvalidator</groupId>
     <artifactId>autocdninvalidator</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>Auto CDN Invalidator</name>
     <description>Auto CDN Invalidator</description>
     <modules>
