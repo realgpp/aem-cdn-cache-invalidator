@@ -1,0 +1,5 @@
+{
+    "scripts": [
+        "create service user autocdninvalidatorReadService \n                set ACL on /content   \n                allow jcr:read for autocdninvalidatorReadService\n            end"
+    ]
+}

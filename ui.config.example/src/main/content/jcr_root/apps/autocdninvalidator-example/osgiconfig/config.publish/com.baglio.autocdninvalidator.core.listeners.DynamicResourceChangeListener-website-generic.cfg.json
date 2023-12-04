@@ -1,0 +1,12 @@
+{
+  "isEnabled": false,
+  "resource.change.types": [
+    "CHANGED"
+  ],
+  "resource.paths": [
+    "/content/we-retail",
+    "/content/wknd"
+  ],
+  "job.topic": "com/baglio/autocdninvalidator/akamai/generic",
+  "filter.regex": "^/content/(we-retail|wknd)(?!.*products)(?!.*adventures).*$"
+}

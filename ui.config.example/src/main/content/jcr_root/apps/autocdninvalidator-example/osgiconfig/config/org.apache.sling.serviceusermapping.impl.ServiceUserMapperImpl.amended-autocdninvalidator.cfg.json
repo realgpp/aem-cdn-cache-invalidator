@@ -1,0 +1,4 @@
+{
+  "service.ranking": "0",
+  "user.mapping": ["autocdninvalidator.core=autocdninvalidatorReadService"]
+}
