@@ -8,14 +8,13 @@ The library listens for AEM replication and resource change events. It then trig
 
 **Key Features:**
 
-- **Flexible CDN integrations** - Supports [Akamai](https://www.akamai.com) out-of-the-box. Easily extend for other CDNs via APIs
+- **Akamai support built-in** - [Akamai](https://www.akamai.com) Purge API are integrated
+- **Flexible CDN integrations** - Easily extend for other CDNs via APIs
+- **Extension APIs** - Hooks to personalize behavior
 - **Automatic invalidation triggering** - Listens for AEM publish events and replication
 - **Configurable invalidation rules** - Invalidates by URL, tag or code based on configurations
 - **Background async processing** - Offloads CDN calls to optimize performance
 - **Logs** - Detailed logging for tracking and alerts integration
-- **Akamai support built-in** - Akamai Purge API are integrated 
-- **Flexible CDN integrations** - Easily extendable for other CDNs via APIs
-- **Extension APIs** - Hooks to personalize behavior
 
 Project supports Akamai CDN by default and this chapter will show you how to use the built-in support, but you can customize the invalidation behaviour by changing the configurations according to your needs.
 If you want to use a different content delivery networks provider or modify slightly the default logic, you can define new implementations or extend the code by overriding some of the available hook methods. See paragraph "Implementing a Custom CDN Provider" for more details.
@@ -253,3 +252,4 @@ See the [http-https-echo](https://github.com/mendhak/docker-http-https-echo) doc
 
  - Junit testing: Improve unit and integration test coverage using JUnit
  - CDN Provider Support: Expand built-in support for additional CDN providers
+ - UI dashboard: Add UI to trigger invalidation from author instance
