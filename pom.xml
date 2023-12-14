@@ -18,7 +18,7 @@
     <groupId>com.baglio.autocdninvalidator</groupId>
     <artifactId>autocdninvalidator</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>Auto CDN Invalidator</name>
     <description>Library for automating cache invalidation in content delivery networks connected to AEM.
         It reacts to AEM publish events and selectively triggers background jobs to purge related cached URLs, tags or codes based on configurable rules.
