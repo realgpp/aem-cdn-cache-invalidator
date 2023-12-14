@@ -57,7 +57,7 @@ class EditorialAssetInvalidationJobConsumerTest {
   }
 
   @Test
-  void testProcessJobFailing() throws NoSuchFieldException, IllegalAccessException {
+  void testProcessJobFailing() {
     // test service is disabled
     JobConsumer.JobResult result = consumer.process(job);
     assertEquals(JobConsumer.JobResult.CANCEL, result);
@@ -92,6 +92,12 @@ class EditorialAssetInvalidationJobConsumerTest {
     errorHelper.activate(config);
     result = errorHelper.process(job);
     assertEquals(JobConsumer.JobResult.FAILED, result);
+
+    // test wrong invalidation type
+    consumer.activate(getDefaultConfig("wrong-value"));
+    result = consumer.process(job);
+    Assert.assertEquals(JobConsumer.JobResult.FAILED, result);
+
   }
 
   @Test

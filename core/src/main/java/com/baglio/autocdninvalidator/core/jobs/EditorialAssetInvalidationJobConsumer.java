@@ -116,22 +116,7 @@ public class EditorialAssetInvalidationJobConsumer extends AbstractInvalidationJ
       }
       LOGGER.info("Paths to process: {}", paths);
 
-      JobResult jobResult;
-      switch (invalidationType) {
-        case Config.INVALIDATION_TYPE_OPTION_CODE:
-        case Config.INVALIDATION_TYPE_OPTION_TAG:
-          jobResult = handleInvalidateByCodeOrTag(cdnInvalidationService, paths, job);
-          break;
-        case Config.INVALIDATION_TYPE_OPTION_URLS:
-          jobResult = handleInvalidateByURLs(cdnInvalidationService, paths, job);
-          break;
-        default:
-          LOGGER.error("Invalidation type is not allowed: {}", invalidationType);
-          return JobResult.FAILED;
-      }
-
-      return jobResult;
-
+      return handleInvalidate(invalidationType, cdnInvalidationService, paths, job);
     } catch (Exception e) {
       LOGGER.error("Unexpected error while invalidating in CDN", e);
       return JobResult.FAILED;
@@ -141,29 +126,53 @@ public class EditorialAssetInvalidationJobConsumer extends AbstractInvalidationJ
   /**
    * Handles invalidating by code or tag based on configuration.
    *
+   * @param jobInvalidationType type of invalidation
    * @param cdnInvalidationService the CDN invalidation service to use
    * @param paths the content paths that changed
    * @param job the current job being processed
    * @return the job result based on success or failure
    */
-  private JobResult handleInvalidateByCodeOrTag(
-      final CdnInvalidationService cdnInvalidationService, final Set<String> paths, final Job job) {
-    LOGGER.debug("About to get invalidation values for paths: {}", paths);
+  private JobResult handleInvalidate(
+      final String jobInvalidationType,
+      final CdnInvalidationService cdnInvalidationService,
+      final Set<String> paths,
+      final Job job) {
+    LOGGER.debug("About to get invalidation for items: {}", paths);
 
-    Set<String> values = processValues(paths);
-
-    if (values.isEmpty()) {
-      LOGGER.debug("No values to invalidate: processing cancelled");
-      return JobResult.CANCEL;
+    Set<String> items;
+    switch (jobInvalidationType) {
+      case Config.INVALIDATION_TYPE_OPTION_CODE:
+      case Config.INVALIDATION_TYPE_OPTION_TAG:
+        items = processValues(paths);
+        break;
+      case Config.INVALIDATION_TYPE_OPTION_URLS:
+        items = processURLs(paths);
+        break;
+      default:
+        LOGGER.error("Invalidation type is not allowed: {}", jobInvalidationType);
+        return JobResult.FAILED;
     }
 
-    LOGGER.debug("Values to invalidate: {}", values);
+    LOGGER.debug("Items to invalidate: {}", items);
 
-    values = beforeInvalidation(values);
-    boolean result =
-        Config.INVALIDATION_TYPE_OPTION_CODE.equals(invalidationType)
-            ? cdnInvalidationService.purgeByCode(values)
-            : cdnInvalidationService.purgeByTag(values);
+    items = beforeInvalidation(items);
+    boolean result;
+    switch (jobInvalidationType) {
+      case Config.INVALIDATION_TYPE_OPTION_CODE:
+        result = cdnInvalidationService.purgeByCode(items);
+        break;
+      case Config.INVALIDATION_TYPE_OPTION_TAG:
+        result = cdnInvalidationService.purgeByTag(items);
+        break;
+      case Config.INVALIDATION_TYPE_OPTION_URLS:
+        LOGGER.debug("Values after processing: {}", items);
+        result = cdnInvalidationService.purgeByURLs(items);
+        break;
+      default:
+        LOGGER.error("Invalidation type is not allowed: {}", jobInvalidationType);
+        return JobResult.FAILED;
+    }
+
     result = afterInvalidation(result, job);
     return getFinalResult(result, job);
   }
@@ -178,33 +187,18 @@ public class EditorialAssetInvalidationJobConsumer extends AbstractInvalidationJ
    */
   private Set<String> processValues(final Set<String> paths) {
 
+    LOGGER.debug("About to process values: {}", paths);
+
     Set<String> values = preprocessInvalidationValues(paths);
-    LOGGER.debug("Invalidation values after initial processing: {}", values);
+    LOGGER.trace("Invalidation values after initial processing: {}", values);
 
     values = getInvalidationValues(values, invalidationRules);
-    LOGGER.debug("Invalidation values after main processing: {}", values);
+    LOGGER.trace("Invalidation values after main processing: {}", values);
 
     values = postprocessInvalidationValues(values);
     LOGGER.debug("Final invalidation values to send: {}", values);
+
     return values;
-  }
-
-  /**
-   * Handles invalidating by public URLs.
-   *
-   * @param cdnInvalidationService the CDN invalidation service
-   * @param paths the content paths that changed
-   * @param job the current job
-   * @return the job result based on success or failure
-   */
-  private JobResult handleInvalidateByURLs(
-      final CdnInvalidationService cdnInvalidationService, final Set<String> paths, final Job job) {
-    Set<String> urls = processURLs(paths);
-
-    LOGGER.debug("Values after third processing: {}", urls);
-
-    boolean result = cdnInvalidationService.purgeByURLs(urls);
-    return getFinalResult(result, job);
   }
 
   /**
@@ -217,15 +211,18 @@ public class EditorialAssetInvalidationJobConsumer extends AbstractInvalidationJ
    */
   private Set<String> processURLs(final Set<String> paths) {
 
-    LOGGER.debug("About to process paths: {}", paths);
+    LOGGER.debug("About to process urls: {}", paths);
 
     Set<String> urls = preprocessPublicUrls(paths);
-    LOGGER.debug("Values after first processing: {}", urls);
+    LOGGER.trace("Invalidation urls after initial processing: {}", urls);
 
     urls = getPublicUrls(urls, externalLinkDomain, externalLinkScheme);
-    LOGGER.debug("Values after second processing: {}", urls);
+    LOGGER.trace("Invalidation urls after main processing: {}", urls);
 
-    return postprocessPublicUrls(urls);
+    urls = postprocessPublicUrls(urls);
+    LOGGER.debug("Final invalidation urls to send: {}", urls);
+
+    return urls;
   }
 
   /** {@inheritDoc} */
@@ -268,28 +265,28 @@ public class EditorialAssetInvalidationJobConsumer extends AbstractInvalidationJ
   /** {@inheritDoc} */
   @Override
   public Set<String> preprocessPublicUrls(final Set<String> paths) {
-    LOGGER.debug("preprocessPublicUrls - objects: {}", paths);
+    LOGGER.trace("preprocessPublicUrls - objects: {}", paths);
     return paths;
   }
 
   /** {@inheritDoc} */
   @Override
   public Set<String> postprocessPublicUrls(final Set<String> paths) {
-    LOGGER.debug("postprocessPublicUrls - objects: {}", paths);
+    LOGGER.trace("postprocessPublicUrls - objects: {}", paths);
     return paths;
   }
 
   /** {@inheritDoc} */
   @Override
   public Set<String> beforeInvalidation(final Set<String> values) {
-    LOGGER.debug("beforeInvalidation - objects: {}", values);
+    LOGGER.trace("beforeInvalidation - objects: {}", values);
     return values;
   }
 
   /** {@inheritDoc} */
   @Override
   public boolean afterInvalidation(final boolean result, final Job job) {
-    LOGGER.debug("afterInvalidation - result: {}, job: {}", result, job);
+    LOGGER.trace("afterInvalidation - result: {}, job: {}", result, job);
     return result;
   }
 

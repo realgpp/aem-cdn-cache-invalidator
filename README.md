@@ -228,7 +228,7 @@ To learn how to build the project, please refer to [README-BUILD.md](README-BUIL
 
 ### Local CDN Simulation
 
-For testing locally without an actual content delivery network, you can simulate CDN calls using [mendhak/http-https-echo](https://github.com/mendhak/docker-http-https-echo).
+For testing locally without an actual content delivery network, you can simulate CDN calls using [mendhak/docker-http-https-echo](https://github.com/mendhak/docker-http-https-echo).
 
 This Docker image echoes back HTTP requests and responds based on configuration options. You can observe request handling, headers, payloads etc. without an external endpoint.
 
@@ -246,7 +246,7 @@ To use:
 
 4. When ready, switch the configuration to call your actual CDN endpoints.
 
-See the [http-https-echo](https://github.com/mendhak/docker-http-https-echo) documentation for additional options to manipulate responses.
+See the [docker-http-https-echo](https://github.com/mendhak/docker-http-https-echo) documentation for additional options to manipulate responses.
 
 # Planned Enhancements
 
